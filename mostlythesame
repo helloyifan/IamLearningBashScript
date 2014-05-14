@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Spacing matters alotin bash, I did
+if diff $1 $2 >/dev/null  ; then
+
+	echo "Mostly the same"
+else
+	echo "Different"
+
+fi

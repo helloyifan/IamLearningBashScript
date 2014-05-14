@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#Assignment 1 Question 3
+#User: y25dai  
+#
+#Swap
+
+#Simple program, To input arguments into a Bash script, like any normal command #line program, there are special variables set aside for this
+
+#The arguments are stored in variables with a number in the order of the argument starting at 1
+
+
+echo "$2 $1"
