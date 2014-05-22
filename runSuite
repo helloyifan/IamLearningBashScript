@@ -1,0 +1,70 @@
+#!/bin/bash
+
+usage()
+{
+	echo "Usage: "
+	echo "./runSuite suitefile.txt program"
+}
+
+
+compareTest(){
+	tstName=${1}
+	
+	dirloc="$(dirname "${1}")"
+	input="${dirloc}/${1}.in"
+	output="${dirloc}/${1}.out"
+	actual="${dirloc}/${1}.actual"
+
+	${program} < ${input} > ${actual}                      
+
+
+	diff ${actual} ${output} > /dev/null
+
+	if [ ! ${?} -eq 0 ]; then
+
+	echo "Test failed: ${testName}"                                 
+                        echo "Input:"
+                        cat ${input}
+                        echo "Expected:"
+                        cat ${output}
+                        echo "Actual:"
+                        cat ${actual}
+	fi
+
+	rm ${actual}
+}
+
+
+
+#The other error stuff goes here
+
+if [ $# -lt 2 ] ; then #Check there is enough command line parameters.
+        usage
+        echo "Not enough parameters! (Needs two parameters!)" 1>&2
+        exit 1
+fi
+
+if [ ! -e $1 ] ; then
+        usage
+        echo "$1 does not exist!" 1>&2
+        exit 1
+fi
+
+if [ ! -e $2 ] ; then
+        usage
+        echo "$2 does not exist!" 1>&2
+        exit 1
+fi
+
+
+program=${2}
+file=${2}
+direc=$(dirname ${program})
+suiteFile=${direc}/${1}
+
+
+for file in `egrep '*' ${suiteFile}` ; do              
+        compareTest ${file}                                           
+done
+
+
