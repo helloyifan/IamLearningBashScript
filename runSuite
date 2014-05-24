@@ -1,28 +1,60 @@
 #!/bin/bash
 
+#Assignment 1 Question5
+#Name Yifan Dai,20475820
+
+#usage()
+#Displays the proper way to use the bashscript when called upon
 usage()
 {
 	echo "Usage: "
-	echo "./runSuite suitefile.txt program"
+	echo "./runSuite suite.txt ./program"
 }
 
 
+
+#comparetest() 
+#Main computation, first it checks for any missing .in or .out file
+#Then provides the .in file and compares it to the output.
+
+
 compareTest(){
+
+
 	tstName=${1}
+	
+
+	if [ ! -r ${direc}/${1}.in ] ; then
+		echo "$1.in file is unreadable!" 1>&2
+		exit 1
+	fi
+	if [ ! -r ${direc}/${1}.out ] ; then
+		echo "$1.out file is unreadable!" 1>&2
+		exit 1
+	fi
+	if [ ! -e ${direc}/${1}.out ] ; then
+		echo "$1.out file does not exist!" 1>&2
+		exit 1
+	fi
+	if [ ! -e ${direc}/${1}.in ] ; then
+		echo "$1.in file does not exist!" 1>&2
+		exit 1
+	fi
 	
 	dirloc="$(dirname "${1}")"
 	input="${dirloc}/${1}.in"
 	output="${dirloc}/${1}.out"
-	actual="${dirloc}/${1}.actual"
+	actual=`mktemp /tmp/${dirloc}/${1}.XXXXXX`
+
 
 	${program} < ${input} > ${actual}                      
 
 
-	diff ${actual} ${output} > /dev/null
+	diff ${actual} ${output} > /tmp/diff
 
 	if [ ! ${?} -eq 0 ]; then
 
-	echo "Test failed: ${testName}"                                 
+	echo "Test failed: ${tstName}"                                 
                         echo "Input:"
                         cat ${input}
                         echo "Expected:"
@@ -32,8 +64,8 @@ compareTest(){
 	fi
 
 	rm ${actual}
+	rm /tmp/diff
 }
-
 
 
 #The other error stuff goes here

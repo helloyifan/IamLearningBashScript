@@ -1,0 +1,143 @@
+#!/bin/bash
+
+#Assignment 1 Question6
+#Name Yifan Dai,20475820
+
+
+#usage()
+#Displays the proper way to use the bashscript when called upon
+
+usage()
+{
+	echo "Usage: "
+	echo "./runSuite suite.txt ./program"
+}
+
+
+#comparetest()
+#Where the main computation happens, in compare test we will check
+#for the .args files and run it accordingly.  
+
+compareTest(){
+
+
+	tstName=${1} 
+
+
+	if [ -e  ${direc}/${1}.args ]; then	
+	
+
+        if [ ! -r ${direc}/${1}.args ] ; then
+                echo "$1.args file is unreadable!" 1>&2
+                exit 1
+        fi
+       
+	 if [ ! -r ${direc}/${1}.in ] ; then
+                echo "$1.in file is unreadable!" 1>&2
+                exit 1
+        fi
+        if [ ! -r ${direc}/${1}.out ] ; then
+                echo "$1.out file is unreadable!" 1>&2
+                exit 1
+        fi
+        if [ ! -e ${direc}/${1}.out ] ; then
+                echo "$1.out file does not exist!" 1>&2
+                exit 1
+        fi
+        if [ ! -e ${direc}/${1}.in ] ; then
+                echo "$1.in file does not exist!" 1>&2
+                exit 1
+        fi
+
+        dirloc="$(dirname "${1}")"
+        input="${dirloc}/${1}.in"
+	args="${dirloc}/${1}.args"
+        output="${dirloc}/${1}.out"
+        actual=`mktemp /tmp/${dirloc}/${1}.XXXXXX`
+	
+        ${program} $(cat ${args}) < ${input} > ${actual}
+
+
+        diff ${actual} ${output} > /tmp/diff
+
+        if [ ! ${?} -eq 0 ]; then
+
+        echo "Test failed: ${tstName}"
+                        echo "Input:"
+                        cat ${input}
+                        echo "Expected:"
+                        cat ${output}
+                        echo "Actual:"
+                        cat ${actual}
+        fi
+
+        rm ${actual}
+        rm /tmp/diff
+
+	else
+
+	if [ ! -r ${direc}/${1}.in ] ; then
+		echo "$1.in file is unreadable!" 1>&2
+		exit 1
+	fi
+	if [ ! -r ${direc}/${1}.out ] ; then
+		echo "$1.out file is unreadable!" 1>&2
+		exit 1
+	fi
+	if [ ! -e ${direc}/${1}.out ] ; then
+		echo "$1.out file does not exist!" 1>&2
+		exit 1
+	fi
+	if [ ! -e ${direc}/${1}.in ] ; then
+		echo "$1.in file does not exist!" 1>&2
+		exit 1
+	fi
+	
+	dirloc="$(dirname "${1}")"
+	input="${dirloc}/${1}.in"
+	output="${dirloc}/${1}.out"
+	actual=`mktemp /tmp/${dirloc}/${1}.XXXXXX`
+
+
+	${program} < ${input} > ${actual}                      
+
+
+	diff ${actual} ${output} > /tmp/diff
+
+	if [ ! ${?} -eq 0 ]; then
+
+	echo "Test failed: ${tstName}"                                 
+                        echo "Input:"
+                        cat ${input}
+                        echo "Expected:"
+                        cat ${output}
+                        echo "Actual:"
+                        cat ${actual}
+	fi
+
+	rm ${actual}
+	rm /tmp/diff
+
+	fi
+}
+
+
+#The main function
+
+if [ $# -lt 2 ] ; then #Check there is enough command line parameters.
+        usage
+        echo "Not enough parameters! (Needs two parameters!)" 1>&2
+        exit 1
+fi
+
+program=${2}
+file=${2}
+direc=$(dirname ${program})
+suiteFile=${direc}/${1}
+
+
+for file in `egrep '*' ${suiteFile}` ; do              
+        compareTest ${file}                                           
+done
+
+
