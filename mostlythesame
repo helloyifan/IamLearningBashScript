@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#Assignment 1 Question4
-#Name Yifan Dai,20475820
 
 #Mostly the same is comparing two files using the =  command
 #First read the contents of the  files into variables
