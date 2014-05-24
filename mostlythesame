@@ -1,9 +1,13 @@
 #!/bin/bash
 
-#Spacing matters alotin bash, I did
- diff ${1} ${2} >/dev/null
+#Assignment 1 Question4
+#Name Yifan Dai,20475820
 
-	if [ ${?} -eq 0 ]; then
+#Mostly the same is comparing two files using the =  command
+#First read the contents of the  files into variables
+#and set both to lower case
+
+if diff -l $1 $2 >/dev/null  ; then
 
 	echo "Mostly the same."
 else
